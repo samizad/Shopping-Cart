@@ -47,6 +47,12 @@ class View {
 
 class Storage {
   // manage save received data
+  //save data in local storage
+  // define a static object to use it  globaly
+  static saveProducts(products) {
+    //json.stringify for change array to JSon
+    localStorage.setItem("product", JSON.stringify(products));
+  }
 }
 //create objects after loading
 document.addEventListener("DOMContentLoaded", () => {
@@ -54,5 +60,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const view = new View();
   const product = new Product();
 
-  product.getProducts().then((data) => view.displayProducts(data));
+  product.getProducts().then((data) => {
+    view.displayProducts(data);
+    Storage.saveProducts(data);
+  });
 });
