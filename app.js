@@ -43,15 +43,35 @@ class View {
     });
     productDOM.innerHTML = result;
   }
+  //identify products base on id
+  //for select buttons
+  // document.querySelectorAll(".bag-btn") return a noad list
+  //use spread operator to collect all buttons in an array
+  getCartButtons() {
+    const buttons = [...document.querySelectorAll(".bag-btn")];
+    //get id of each
+    buttons.forEach((item) => {
+      let id = item.dataset.id;
+      item.addEventListener("click", (event) => {
+        let cartItem = Storage.getProduct(id);
+        cart = [...cart, cartItem];
+        console.log(cart);
+      });
+    });
+  }
 }
 
 class Storage {
   // manage save received data
   //save data in local storage
-  // define a static object to use it  globaly
+  // define a static object to use itglobaly
   static saveProducts(products) {
     //json.stringify for change array to JSon
-    localStorage.setItem("product", JSON.stringify(products));
+    localStorage.setItem("products", JSON.stringify(products));
+  }
+  static getProduct(id) {
+    let products = JSON.parse(localStorage.getItem("products"));
+    return products.find((item) => item.id === id);
   }
 }
 //create objects after loading
@@ -60,8 +80,14 @@ document.addEventListener("DOMContentLoaded", () => {
   const view = new View();
   const product = new Product();
 
-  product.getProducts().then((data) => {
-    view.displayProducts(data);
-    Storage.saveProducts(data);
-  });
+  product
+    .getProducts()
+    .then((data) => {
+      view.displayProducts(data);
+      Storage.saveProducts(data);
+    })
+    .then(() => {
+      //get buttons after  get products list
+      view.getCartButtons();
+    });
 });
